@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-streak-bg: #0f1214;
+  --color-streak-card: #16191d;
+  --color-streak-surface: #1e2227;
+  --color-streak-primary: #00e676;
+  --color-streak-primary-hover: #00c853;
+  --color-streak-text: #f8f9fa;
+  --color-streak-muted: #9ca3af;
+  --font-sans: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-streak-bg);
+    color: var(--color-streak-text);
+    font-family: var(--font-sans);
+  }
+}
