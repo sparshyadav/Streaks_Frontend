@@ -2,6 +2,7 @@ import { Flame, Mail, Lock, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/signup";
 import { useState } from "react";
+import { showSuccess, showError } from "../../../utils/toast";
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -22,10 +23,12 @@ export default function Login() {
             const data = await loginUser(formData);
             console.log("Success: ", data);
             localStorage.setItem("token", data.token);
+            showSuccess("Login Successful");
             navigate("/dashboard", {replace: true});
         }
         catch (err) {
             setError(err.message);
+            showError(err.message || "Login failed");
         }
         finally {
             setLoading(false);

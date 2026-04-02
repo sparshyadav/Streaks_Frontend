@@ -2,6 +2,7 @@ import { Flame, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../api/signup";
+import { showSuccess, showError } from "../../../utils/toast";
 
 function SignupForm() {
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -20,11 +21,12 @@ function SignupForm() {
 
         try {
             const data = await signupUser(formData);
-            console.log("Success: ", data);
+            showSuccess("Account created successfully!");
             navigate("/login", {replace: true});
         }
         catch (err) {
             setError(err.message);
+            showError(err.message || "Registration failed");
         }
         finally {
             setLoading(false);
