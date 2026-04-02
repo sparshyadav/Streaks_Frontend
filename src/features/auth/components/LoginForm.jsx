@@ -1,10 +1,10 @@
-import { Flame, Mail, Lock, User, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { Flame, Mail, Lock, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { signupUser } from "../api/signup";
+import { loginUser } from "../api/signup";
+import { useState } from "react";
 
-function SignupForm() {
-    const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+export default function Login() {
+    const [formData, setFormData] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate=useNavigate();
@@ -19,9 +19,10 @@ function SignupForm() {
         setError("");
 
         try {
-            const data = await signupUser(formData);
+            const data = await loginUser(formData);
             console.log("Success: ", data);
-            navigate("/login", {replace: true});
+            localStorage.setItem("token", data.token);
+            navigate("/dashboard", {replace: true});
         }
         catch (err) {
             setError(err.message);
@@ -30,6 +31,7 @@ function SignupForm() {
             setLoading(false);
         }
     }
+
     return (
         <div className="flex min-h-screen items-center justify-center p-4">
             <div className="w-full max-w-md bg-streak-card rounded-2xl p-8 shadow-2xl border border-white/5 relative overflow-hidden">
@@ -39,31 +41,11 @@ function SignupForm() {
                     <div className="flex items-center justify-center w-12 h-12 bg-streak-primary/10 rounded-xl mb-4 shadow-[0_0_15px_rgba(0,230,118,0.2)]">
                         <Flame className="w-7 h-7 text-streak-primary" fill="currentColor" />
                     </div>
-                    <h2 className="text-2xl font-bold tracking-tight text-streak-text">Create an account</h2>
-                    <p className="text-streak-muted text-sm mt-2">Start building your streaks today</p>
+                    <h2 className="text-2xl font-bold tracking-tight text-streak-text">Welcome back</h2>
+                    <p className="text-streak-muted text-sm mt-2">Log in to keep your streak alive</p>
                 </div>
 
                 <form className="space-y-5 relative z-10" onSubmit={handleSubmit}>
-                    {error && (
-                        <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-medium p-3 rounded-xl mb-4">
-                            {error}
-                        </div>
-                    )}
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-streak-text/90">Full Name</label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-streak-muted" />
-                            <input
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                type="text"
-                                placeholder="John Doe"
-                                className="w-full bg-streak-surface border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-streak-text placeholder:text-streak-muted focus:outline-none focus:ring-2 focus:ring-streak-primary/50 focus:border-streak-primary transition-all"
-                            />
-                        </div>
-                    </div>
-
                     <div className="space-y-1.5">
                         <label className="text-sm font-medium text-streak-text/90">Email</label>
                         <div className="relative">
@@ -80,13 +62,18 @@ function SignupForm() {
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-streak-text/90">Password</label>
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-medium text-streak-text/90">Password</label>
+                            <a href="#" className="text-xs text-streak-primary hover:text-streak-primary-hover font-medium transition-colors">
+                                Forgot password?
+                            </a>
+                        </div>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-streak-muted" />
                             <input
                                 name="password"
-                                value={formData.password}
                                 onChange={handleChange}
+                                value={formData.password}
                                 type="password"
                                 placeholder="••••••••"
                                 className="w-full bg-streak-surface border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-streak-text placeholder:text-streak-muted focus:outline-none focus:ring-2 focus:ring-streak-primary/50 focus:border-streak-primary transition-all"
@@ -96,23 +83,20 @@ function SignupForm() {
 
                     <button
                         type="submit"
-                        disabled={loading}
-                        className="w-full flex items-center justify-center gap-2 bg-streak-primary hover:bg-streak-primary-hover text-streak-bg font-bold rounded-xl py-3 mt-6 transition-all hover:shadow-[0_0_20px_rgba(0,230,118,0.4)] active:scale-[0.98]"
+                        className="w-full flex items-center justify-center gap-2 bg-streak-primary hover:bg-streak-primary-hover text-streak-bg font-bold rounded-xl py-3 mt-4 transition-all hover:shadow-[0_0_20px_rgba(0,230,118,0.4)] active:scale-[0.98]"
                     >
-                        {loading ? "Registering..." : "Create Account"}
+                        Log In
                         <ArrowRight className="w-5 h-5" />
                     </button>
                 </form>
 
                 <p className="text-center text-sm text-streak-muted mt-8 relative z-10">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-streak-primary hover:text-streak-primary-hover font-medium transition-colors">
-                        Log in
+                    Don't have an account?{" "}
+                    <Link to="/signup" className="text-streak-primary hover:text-streak-primary-hover font-medium transition-colors">
+                        Sign up
                     </Link>
                 </p>
             </div>
         </div>
     );
 }
-
-export default SignupForm;

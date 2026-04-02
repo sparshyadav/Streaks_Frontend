@@ -10,3 +10,14 @@ export const signupUser = async (userData) => {
         throw new Error(message);
     }
 }
+
+export const loginUser=async(userData)=>{
+    try{
+        const response=await api.post('/auth/login', userData);
+        return response.data;
+    }
+    catch(error){
+        const message=error.response?.data?.message || "Something went wrong";
+        throw new Error(message);
+    }
+}
