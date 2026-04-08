@@ -8,10 +8,74 @@ function SignupForm() {
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const navigate=useNavigate();
+    const [formError, setFormError] = useState({ nameError: "", emailError: "", passwordError: "" });
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+
+        if (name === "name") {
+            if (!value) {
+                setFormError({ ...formError, nameError: "Name is required" })
+            }
+            else if (value.length < 3) {
+                setFormError({ ...formError, nameError: "Name must be at least 3 characters long" })
+            }
+            else {
+                setFormError({ ...formError, nameError: "" })
+            }
+        }
+
+        if (name === "email") {
+            if (!value) {
+                setFormError({ ...formError, emailError: "Email is required" })
+            }
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                setFormError({ ...formError, emailError: "Email is invalid" })
+            }
+            else {
+                setFormError({ ...formError, emailError: "" })
+            }
+        }
+
+        if (name === "password") {
+            if (!value) {
+                setFormError({ ...formError, passwordError: "Password is required" })
+            }
+            else if (value.length < 6) {
+                setFormError({ ...formError, passwordError: "Password must be at least 6 characters long" })
+            }
+            else {
+                setFormError({ ...formError, passwordError: "" })
+            }
+        }
+    }
+
+    const validateAll = () => {
+        const errors = {
+            nameError: "",
+            emailError: "",
+            passwordError: ""
+        };
+
+        if (!formData.name) errors.nameError = "Name is required";
+        else if (formData.name.length < 3) errors.nameError = "Too short";
+
+        if (!formData.email) errors.emailError = "Email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+            errors.emailError = "Invalid email";
+
+        if (!formData.password) errors.passwordError = "Password required";
+        else if (formData.password.length < 6)
+            errors.passwordError = "Too short";
+
+        setFormError(errors);
+
+        return !errors.nameError && !errors.emailError && !errors.passwordError;
     };
 
     const handleSubmit = async (e) => {
@@ -19,10 +83,20 @@ function SignupForm() {
         setLoading(true);
         setError("");
 
+        if (formError.nameError || formError.emailError || formError.passwordError) {
+            showError("Please fill all the fields correctly");
+            return;
+        }
+
+        if(!validateAll()){
+            showError("Please fill all the fields correctly");
+            return;
+        }
+
         try {
             const data = await signupUser(formData);
             showSuccess("Account created successfully!");
-            navigate("/login", {replace: true});
+            navigate("/login", { replace: true });
         }
         catch (err) {
             setError(err.message);
@@ -61,9 +135,11 @@ function SignupForm() {
                                 onChange={handleChange}
                                 type="text"
                                 placeholder="John Doe"
+                                onBlur={handleBlur}
                                 className="w-full bg-streak-surface border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-streak-text placeholder:text-streak-muted focus:outline-none focus:ring-2 focus:ring-streak-primary/50 focus:border-streak-primary transition-all"
                             />
                         </div>
+                        {formError.nameError && <p className="text-red-500 text-sm">{formError.nameError}</p>}
                     </div>
 
                     <div className="space-y-1.5">
@@ -76,9 +152,11 @@ function SignupForm() {
                                 onChange={handleChange}
                                 type="email"
                                 placeholder="name@example.com"
+                                onBlur={handleBlur}
                                 className="w-full bg-streak-surface border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-streak-text placeholder:text-streak-muted focus:outline-none focus:ring-2 focus:ring-streak-primary/50 focus:border-streak-primary transition-all"
                             />
                         </div>
+                        {formError.emailError && <p className="text-red-500 text-sm">{formError.emailError}</p>}
                     </div>
 
                     <div className="space-y-1.5">
@@ -91,9 +169,11 @@ function SignupForm() {
                                 onChange={handleChange}
                                 type="password"
                                 placeholder="••••••••"
+                                onBlur={handleBlur}
                                 className="w-full bg-streak-surface border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-streak-text placeholder:text-streak-muted focus:outline-none focus:ring-2 focus:ring-streak-primary/50 focus:border-streak-primary transition-all"
                             />
                         </div>
+                        {formError.passwordError && <p className="text-red-500 text-sm">{formError.passwordError}</p>}
                     </div>
 
                     <button

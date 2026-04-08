@@ -8,23 +8,57 @@ export default function Login() {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const navigate=useNavigate();
+    const [formError, setFormError] = useState({ emailError: "", passwordError: "" });
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+
+        if (name === "email") {
+            if (!value) {
+                setFormError({ ...formError, emailError: "Email is required" });
+            }
+            else if (!value.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+                setFormError({ ...formError, emailError: "Invalid email address" });
+            }
+            else {
+                setFormError({ ...formError, emailError: "" });
+            }
+        }
+
+        if (name === "password") {
+            if (!value) {
+                setFormError({ ...formError, passwordError: "Password is required" });
+            }
+            else if (value.length < 6) {
+                setFormError({ ...formError, passwordError: "Password must be at least 6 characters long" });
+            }
+            else {
+                setFormError({ ...formError, passwordError: "" });
+            }
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
+        if (formError.emailError || formError.passwordError) {
+            showError("Please fill all the fields correctly");
+            return;
+        }
+
         try {
             const data = await loginUser(formData);
             console.log("Success: ", data);
             localStorage.setItem("token", data.token);
             showSuccess("Login Successful");
-            navigate("/dashboard", {replace: true});
+            navigate("/dashboard", { replace: true });
         }
         catch (err) {
             setError(err.message);
@@ -59,9 +93,11 @@ export default function Login() {
                                 onChange={handleChange}
                                 type="email"
                                 placeholder="name@example.com"
+                                onBlur={handleBlur}
                                 className="w-full bg-streak-surface border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-streak-text placeholder:text-streak-muted focus:outline-none focus:ring-2 focus:ring-streak-primary/50 focus:border-streak-primary transition-all"
                             />
                         </div>
+                        {formError.emailError && <p className="text-red-500 text-sm">{formError.emailError}</p>}
                     </div>
 
                     <div className="space-y-1.5">
@@ -79,9 +115,11 @@ export default function Login() {
                                 value={formData.password}
                                 type="password"
                                 placeholder="••••••••"
+                                onBlur={handleBlur}
                                 className="w-full bg-streak-surface border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-streak-text placeholder:text-streak-muted focus:outline-none focus:ring-2 focus:ring-streak-primary/50 focus:border-streak-primary transition-all"
                             />
                         </div>
+                        {formError.passwordError && <p className="text-red-500 text-sm">{formError.passwordError}</p>}
                     </div>
 
                     <button
@@ -103,3 +141,4 @@ export default function Login() {
         </div>
     );
 }
+
