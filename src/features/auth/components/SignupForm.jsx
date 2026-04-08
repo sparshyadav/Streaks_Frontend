@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../api/signup";
 import { showSuccess, showError } from "../../../utils/toast";
+import CustomGoogleLogin from "./GoogleLogin";
 
 function SignupForm() {
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -185,6 +186,19 @@ function SignupForm() {
                         <ArrowRight className="w-5 h-5" />
                     </button>
                 </form>
+
+                <div className="relative my-6 z-10 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-white/10"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-streak-card text-streak-muted">Or continue with</span>
+                    </div>
+                </div>
+
+                <div className="relative z-10">
+                    <CustomGoogleLogin />
+                </div>
 
                 <p className="text-center text-sm text-streak-muted mt-8 relative z-10">
                     Already have an account?{" "}
