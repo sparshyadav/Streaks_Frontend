@@ -55,9 +55,9 @@ export default function Login() {
         }
 
         try {
-            const data = await loginUser(formData);
-            console.log("Success: ", data);
-            localStorage.setItem("token", data.token);
+            const resp = await loginUser(formData);
+            console.log("Success: ", resp);
+            localStorage.setItem("token", resp.data.token);
             showSuccess("Login Successful");
             navigate("/dashboard", { replace: true });
         }
