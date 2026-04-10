@@ -3,8 +3,9 @@ import ProtectedRoute from "./ProtectedRoute";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 
+import Dashboard from "../pages/Dashboard";
+
 const Home = () => <div>Home Page</div>
-const Dashboard = () => <div>Dashboard Page</div>
 
 const router = createBrowserRouter([
     {
